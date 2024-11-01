@@ -14,8 +14,11 @@ async def cmd_start(message: Message):
     user_id = message.from_user.id
     first_name = message.from_user.first_name
     last_name = message.from_user.last_name
-    user_data.add_user(user_id, first_name, last_name)
-    await message.answer(f'Hello, {message.from_user.first_name}!',
+    if user_data.user_exist(user_id):
+        await message.answer(f'С возвращением, {message.from_user.first_name}!')
+    else:
+        user_data.add_user(user_id, first_name, last_name)
+        await message.answer(f'Привет, {message.from_user.first_name}!',
                          reply_markup=kb.main)
     
 

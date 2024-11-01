@@ -8,8 +8,8 @@ def create_db():
     
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id BIG INTEGER UNIQUE,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id BIG INTEGER UNIQUE,
             first_name TEXT NOT NULL,
             last_name TEXT,
             registration_date TEXT NOT NULL
@@ -21,7 +21,7 @@ def create_db():
 create_db()
 
 
-def add_user(id, first_name, last_name):
+def add_user(user_id, first_name, last_name):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     
@@ -29,9 +29,9 @@ def add_user(id, first_name, last_name):
     
     try:
         cursor.execute('''
-            INSERT INTO users (id, first_name, last_name, registration_date) 
+            INSERT INTO users (user_id, first_name, last_name, registration_date) 
             VALUES (?, ?, ?, ?)
-        ''', (id, first_name, last_name, registration_date))
+        ''', (user_id, first_name, last_name, registration_date))
         conn.commit()
     except sqlite3.IntegrityError:
         print('User is already registered.')
@@ -39,3 +39,28 @@ def add_user(id, first_name, last_name):
         conn.close()
 
 
+def user_exist(user_id):
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT COUNT(*) FROM users WHERE user_id = ?', (user_id,))
+    result = cursor.fetchone()[0]
+
+    conn.close()
+
+    return result > 0 
+
+
+def view_users():
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+
+    for user in users:
+        print(user)
+
+    conn.close()
+
+# view_users()
